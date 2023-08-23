@@ -1,4 +1,4 @@
-﻿# Script authored by Tycho Löke
+# Script authored by Tycho Löke
 
 # Check if NuGet module is already installed, if not install it
 if (!(Get-Module -Name NuGet -ListAvailable)) {
@@ -13,6 +13,11 @@ Import-Module Microsoft.Graph.Intune -Global
 
 # The path where the scripts will be saved
 $ScriptPath = "C:\temp"
+
+# Ensure the directory exists
+if (!(Test-Path -Path $ScriptPath)) {
+    New-Item -ItemType Directory -Force -Path $ScriptPath
+}
 
 # Connect to Azure Graph
 Connect-MSGraph
