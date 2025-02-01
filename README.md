@@ -1,38 +1,79 @@
-# Intune-Script-Retriever
+# 🚀 Intune Script Retriever  
 
-This PowerShell script, authored by Tycho Löke, allows you to download all the scripts that are associated with your Intune account. The scripts will be saved to a specified local directory (`C:\temp` by default).
+This **PowerShell script**, authored by **Tycho Löke**, automates the process of retrieving and downloading **all scripts associated with your Intune account** via the **Microsoft Graph API**.  
 
-## Prerequisites
+The downloaded scripts are saved locally at **`C:\temp`** by default.  
 
-- An Azure Active Directory (AAD) tenant with an Intune subscription.
-- A Global Administrator or Intune role in AAD.
-- PowerShell with elevated permissions.
-- Internet connectivity to install the required NuGet and Microsoft.Graph.Intune PowerShell modules.
+## 📌 Features  
+✅ **Automated Intune Script Retrieval** – Fetches all scripts linked to your Intune tenant.  
+✅ **Secure Authentication** – Uses Microsoft Graph authentication for seamless access.  
+✅ **Module Installation Handling** – Ensures required PowerShell modules are installed before execution.  
+✅ **User-Friendly Logging** – Displays script names and status updates in real-time.  
+✅ **Efficient & Non-Destructive** – Prevents redundant installations and unnecessary re-execution.  
 
-## Usage
-1. Clone or download the script from this repository.
-2. Open a PowerShell window with elevated permissions.
-3. Run the script by typing `.\Intune-Script-Retriever.ps1`.
-4. When prompted, sign in with your AAD credentials.
-5. The script will check if the NuGet and Microsoft.Graph.Intune modules are installed. If they are not, the script will install them.
-6. The script will then connect to the Microsoft Graph API and retrieve a list of all the scripts associated with your Intune account.
-7. The script will display the number of scripts found and their names.
-8. The script will then download the scripts and save them to the specified local directory (`C:\temp`).
-9. The script will display a message indicating that all the scripts have been downloaded.
+## 🛠 Prerequisites  
+Before running the script, ensure you meet the following requirements:  
 
-## Notes
-- The script uses the beta version of the Microsoft Graph API for Intune.
-- The script saves the scripts in ASCII encoding.
-- The script will overwrite any existing files in the specified directory with the same name as the downloaded scripts.
-- Ensure the specified directory exists or modify the `$ScriptPath` variable in the script to the desired path.
+- **Azure Active Directory (AAD)** – Must have an **Intune subscription**.  
+- **Admin Role** – Requires **Global Admin** or **Intune Admin** role in AAD.  
+- **PowerShell with Elevated Permissions** – Run as Administrator.  
+- **Internet Connectivity** – Needed to install required PowerShell modules.  
 
-## Troubleshooting
-- If the script is unable to connect to the Microsoft Graph API, check that you have the correct permissions in AAD and that your Intune subscription is active.
-- If the script returns an error message, check the error message and the script's output for more information.
-- If the script is unable to install the NuGet or Microsoft.Graph.Intune modules, check that you have internet connectivity and that your PowerShell execution policy allows for the installation of modules.
+## 🚀 How to Use  
 
-## Contribution
-If you want to improve this script, please feel free to open a pull request.
+### **1️⃣ Download the Script**  
+Clone this repository or download the script file manually.  
 
-## License
-This script is licensed under the MIT license.
+```powershell
+git clone https://github.com/your-repo/intune-script-retriever.git
+cd intune-script-retriever
+```
+
+### **2️⃣ Run PowerShell as Administrator**  
+- Open **PowerShell** with elevated permissions (`Run as Administrator`).  
+
+### **3️⃣ Execute the Script**  
+Run the script using:  
+
+```powershell
+.\Intune-Script-Retriever.ps1
+```
+
+### **4️⃣ Authenticate with Microsoft Graph**  
+- Sign in with your **AAD Global Admin** or **Intune Admin** credentials when prompted.  
+
+### **5️⃣ What Happens Next?**  
+✅ The script **checks for required modules** (`NuGet` & `Microsoft.Graph.Intune`).  
+✅ If missing, it **installs them automatically**.  
+✅ The script **connects to the Microsoft Graph API**.  
+✅ Retrieves **all Intune scripts** and displays their **names**.  
+✅ Downloads and **saves scripts locally** to **`C:\temp`**.  
+✅ Displays a **success message** once all scripts are downloaded.  
+
+## 🔎 Notes  
+- The script uses the **beta** version of the **Microsoft Graph API for Intune**.  
+- Scripts are saved in **ASCII encoding** for compatibility.  
+- If a script with the same name already exists, it will be **overwritten**.  
+- To change the save location, modify the `$ScriptPath` variable in the script.  
+
+## 🛠 Troubleshooting  
+
+### ❌ Unable to connect to Microsoft Graph API?  
+- Verify that you have the correct **AAD permissions** and an **active Intune subscription**.  
+
+### ❌ Script fails to install required modules?  
+- Ensure you have **internet connectivity** and that your **PowerShell execution policy** allows module installation.  
+
+### ❌ Error messages during execution?  
+- Check the **PowerShell output** and verify if required permissions or dependencies are missing.  
+
+## 🤝 Contributing  
+Want to improve this script? Contributions are welcome!  
+
+**To contribute:**  
+1. **Fork** the repository.  
+2. **Create a feature branch** (`git checkout -b feature-name`).  
+3. **Submit a Pull Request** with your changes.  
+
+## 📜 License  
+This project is licensed under the **MIT License** – feel free to use, modify, and distribute it.  
