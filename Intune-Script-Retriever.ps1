@@ -40,7 +40,7 @@ function Ensure-Module {
             Write-Output "[INFO] Module already installed: $ModuleName"
         }
     } catch {
-        Write-Output "[ERROR] Failed to install module $ModuleName: $_"
+        Write-Output "[ERROR] Failed to install module $ModuleName: $($_.Exception.Message)"
         Exit 1
     }
 }
@@ -54,7 +54,7 @@ try {
     Import-Module Microsoft.Graph.Intune -Global -ErrorAction Stop
     Write-Output "[SUCCESS] Microsoft.Graph.Intune module imported."
 } catch {
-    Write-Output "[ERROR] Failed to import Microsoft.Graph.Intune module: $_"
+    Write-Output "[ERROR] Failed to import Microsoft.Graph.Intune module: $($_.Exception.Message)"
     Exit 1
 }
 
@@ -64,7 +64,7 @@ try {
     Connect-MSGraph -ErrorAction Stop
     Write-Output "[SUCCESS] Connected to Microsoft Graph."
 } catch {
-    Write-Output "[ERROR] Could not connect to Microsoft Graph: $_"
+    Write-Output "[ERROR] Could not connect to Microsoft Graph: $($_.Exception.Message)"
     Exit 1
 }
 
