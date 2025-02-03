@@ -6,8 +6,8 @@ The downloaded scripts are saved locally at **`C:\temp`** by default.
 
 ## 📌 Features  
 ✅ **Automated Intune Script Retrieval** – Fetches all scripts linked to your Intune tenant.  
-✅ **Secure Authentication** – Uses Microsoft Graph authentication for seamless access.  
-✅ **Module Installation Handling** – Ensures required PowerShell modules are installed before execution.  
+✅ **Secure Authentication** – Uses a **pop-up login window** for seamless authentication with Microsoft Graph.  
+✅ **Optimized Module Usage** – Only loads **Microsoft.Graph.DeviceManagement** instead of the full Microsoft Graph SDK.  
 ✅ **User-Friendly Logging** – Displays script names and status updates in real-time.  
 ✅ **Efficient & Non-Destructive** – Prevents redundant installations and unnecessary re-execution.  
 
@@ -40,18 +40,20 @@ Run the script using:
 ```
 
 ### **4️⃣ Authenticate with Microsoft Graph**  
-- Sign in with your **AAD Global Admin** or **Intune Admin** credentials when prompted.  
+- A **pop-up login window** will appear.
+- Sign in with your **AAD Global Admin** or **Intune Admin** credentials.
 
 ### **5️⃣ What Happens Next?**  
-✅ The script **checks for required modules** (`NuGet` & `Microsoft.Graph.Intune`).  
+✅ The script **checks for required modules** (`NuGet` & `Microsoft.Graph.DeviceManagement`).  
 ✅ If missing, it **installs them automatically**.  
-✅ The script **connects to the Microsoft Graph API**.  
+✅ The script **connects to the Microsoft Graph API** via pop-up login.  
 ✅ Retrieves **all Intune scripts** and displays their **names**.  
 ✅ Downloads and **saves scripts locally** to **`C:\temp`**.  
 ✅ Displays a **success message** once all scripts are downloaded.  
 
 ## 🔎 Notes  
-- The script uses the **beta** version of the **Microsoft Graph API for Intune**.  
+- The script now **uses the pop-up login method (`-UseWebLogin`)** instead of device authentication.  
+- It **only loads `Microsoft.Graph.DeviceManagement`**, reducing load times.  
 - Scripts are saved in **ASCII encoding** for compatibility.  
 - If a script with the same name already exists, it will be **overwritten**.  
 - To change the save location, modify the `$ScriptPath` variable in the script.  
