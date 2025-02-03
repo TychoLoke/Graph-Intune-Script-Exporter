@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     - Ensures required PowerShell modules are installed.
-    - Connects to Microsoft Graph API.
+    - Connects to Microsoft Graph API with specific permissions.
     - Retrieves Intune scripts and saves them locally.
 
 .AUTHOR
@@ -14,8 +14,8 @@
     MIT License - Free to use and distribute.
 #>
 
-# Define script save location
-$ScriptPath = "C:\temp"
+# Ask user for script save location
+$ScriptPath = Read-Host "Enter the directory where you want to save the scripts"
 
 # Ensure the directory exists
 if (!(Test-Path -Path $ScriptPath)) {
@@ -46,23 +46,25 @@ function Ensure-Module {
 }
 
 # Ensure required modules are installed
-Ensure-Module -ModuleName "NuGet"
-Ensure-Module -ModuleName "Microsoft.Graph.Intune"
+Ensure-Module -ModuleName "Microsoft.Graph"
 
-# Import Microsoft.Graph.Intune module
+# Import Microsoft.Graph module
 try {
-    Import-Module Microsoft.Graph.Intune -Global -ErrorAction Stop
-    Write-Output "[SUCCESS] Microsoft.Graph.Intune module imported."
+    Import-Module Microsoft.Graph -Global -ErrorAction Stop
+    Write-Output "[SUCCESS] Microsoft.Graph module imported."
 } catch {
-    Write-Output "[ERROR] Failed to import Microsoft.Graph.Intune module: $($_.Exception.Message)"
+    Write-Output "[ERROR] Failed to import Microsoft.Graph module: $($_.Exception.Message)"
     Exit 1
 }
 
+# Define required Graph API scopes
+$Scopes = @("DeviceManagementConfiguration.ReadWrite.All")
+
 # Connect to Microsoft Graph API
 try {
-    Write-Output "[INFO] Connecting to Microsoft Graph..."
-    Connect-MSGraph -ErrorAction Stop
-    Write-Output "[SUCCESS] Connected to Microsoft Graph."
+    Write-Output "[INFO] Connecting to Microsoft Graph with required permissions..."
+    Connect-MgGraph -Scopes $Scopes -ErrorAction Stop
+    Write-Output "[SUCCESS] Connected to Microsoft Graph with necessary permissions."
 } catch {
     Write-Output "[ERROR] Could not connect to Microsoft Graph: $($_.Exception.Message)"
     Exit 1
@@ -71,7 +73,7 @@ try {
 # Retrieve Intune scripts
 try {
     Write-Output "[INFO] Retrieving Intune scripts..."
-    $ScriptsData = Invoke-MSGraphRequest -Url "https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts" -HttpMethod GET
+    $ScriptsData = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts"
 
     if (!$ScriptsData -or !$ScriptsData.value) {
         Write-Output "[WARNING] No scripts found. Check your permissions and try again."
@@ -88,7 +90,7 @@ try {
     # Download scripts
     Write-Output "[INFO] Downloading scripts..."
     foreach ($ScriptInfo in $ScriptsInfos) {
-        $Script = Invoke-MSGraphRequest -Url "https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts/$($ScriptInfo.id)" -HttpMethod GET
+        $Script = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts/$($ScriptInfo.id)"
         $DecodedScript = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($Script.scriptContent))
         $FilePath = Join-Path -Path $ScriptPath -ChildPath $Script.FileName
 
