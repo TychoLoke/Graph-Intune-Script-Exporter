@@ -14,11 +14,24 @@
     MIT License - Free to use and distribute.
 #>
 
-# Ask user for script save location
-$ScriptPath = Read-Host "Enter the directory where you want to save the scripts"
+# Ask user for script save location with a default value
+$ScriptPath = Read-Host "Enter the directory where you want to save the scripts (default: C:\Temp)"
+if (-not $ScriptPath) {
+    $ScriptPath = "C:\Temp"
+    Write-Output "[INFO] No path provided. Using default path: $ScriptPath"
+}
+try {
+    $ScriptPath = [System.IO.Path]::GetFullPath($ScriptPath)
+    Write-Output "[INFO] Resolved path: $ScriptPath"
+} catch {
+    Write-Output "[ERROR] Invalid path entered: $($_.Exception.Message)"
+    Exit 1
+}
 
 # Ensure the directory exists
-if (!(Test-Path -Path $ScriptPath)) {
+Write-Output "[INFO] Validating the directory path: $ScriptPath"
+if (!(Test-Path -Path $ScriptPath -PathType Container)) {
+    Write-Output "[INFO] Creating directory: $ScriptPath"
     New-Item -ItemType Directory -Force -Path $ScriptPath | Out-Null
 }
 
@@ -40,7 +53,8 @@ function Ensure-Module {
             Write-Output "[INFO] Module already installed: $ModuleName"
         }
     } catch {
-        Write-Output "[ERROR] Failed to install module $ModuleName: $($_.Exception.Message)"
+    $ErrorMessage = $_.Exception.Message.ToString()
+        Write-Output "[ERROR] Failed to install module $($ModuleName): $ErrorMessage"
         Exit 1
     }
 }
@@ -48,10 +62,10 @@ function Ensure-Module {
 # Ensure required modules are installed
 Ensure-Module -ModuleName "Microsoft.Graph"
 
-# Import Microsoft.Graph module
+# Import Microsoft.Graph.DeviceManagement module
 try {
-    Import-Module Microsoft.Graph -Global -ErrorAction Stop
-    Write-Output "[SUCCESS] Microsoft.Graph module imported."
+    Import-Module Microsoft.Graph.DeviceManagement -Global -ErrorAction Stop
+    Write-Output "[SUCCESS] Microsoft.Graph.DeviceManagement module imported."
 } catch {
     Write-Output "[ERROR] Failed to import Microsoft.Graph module: $($_.Exception.Message)"
     Exit 1
