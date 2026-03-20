@@ -14,12 +14,12 @@
     MIT License - Free to use and distribute.
 #>
 
-# Ask user for script save location with a default value
-$ScriptPath = Read-Host "Enter the directory where you want to save the scripts (default: C:\Temp)"
-if (-not $ScriptPath) {
-    $ScriptPath = "C:\Temp"
-    Write-Output "[INFO] No path provided. Using default path: $ScriptPath"
-}
+[CmdletBinding()]
+param(
+    [string]$ScriptPath = "C:\Temp",
+    [switch]$ForceOverwrite
+)
+
 try {
     $ScriptPath = [System.IO.Path]::GetFullPath($ScriptPath)
     Write-Output "[INFO] Resolved path: $ScriptPath"
@@ -72,7 +72,7 @@ try {
 }
 
 # Define required Graph API scopes
-$Scopes = @("DeviceManagementConfiguration.ReadWrite.All")
+$Scopes = @("DeviceManagementConfiguration.Read.All")
 
 # Connect to Microsoft Graph API
 try {
@@ -105,10 +105,15 @@ try {
     Write-Output "[INFO] Downloading scripts..."
     foreach ($ScriptInfo in $ScriptsInfos) {
         $Script = Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/beta/deviceManagement/deviceManagementScripts/$($ScriptInfo.id)"
-        $DecodedScript = [System.Text.Encoding]::ASCII.GetString([System.Convert]::FromBase64String($Script.scriptContent))
+        $DecodedScript = [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($Script.scriptContent))
         $FilePath = Join-Path -Path $ScriptPath -ChildPath $Script.FileName
 
-        $DecodedScript | Out-File -FilePath $FilePath -Encoding ASCII
+        if ((Test-Path -Path $FilePath) -and -not $ForceOverwrite) {
+            Write-Output "[WARNING] Skipping existing file: $($Script.FileName). Use -ForceOverwrite to replace it."
+            continue
+        }
+
+        $DecodedScript | Out-File -FilePath $FilePath -Encoding UTF8
         Write-Output "[SUCCESS] Downloaded: $($Script.FileName)"
     }
 
@@ -117,4 +122,6 @@ try {
 } catch {
     Write-Output "[ERROR] Failed to retrieve or download scripts: $($_.Exception.Message)"
     Exit 1
+} finally {
+    Disconnect-MgGraph | Out-Null
 }

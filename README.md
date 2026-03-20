@@ -6,7 +6,7 @@ The downloaded scripts are saved locally at **`C:\temp`** by default.
 
 ## 📌 Features  
 ✅ **Automated Intune Script Retrieval** – Fetches all scripts linked to your Intune tenant.  
-✅ **Secure Authentication** – Uses interactive Microsoft Graph authentication with delegated scopes.
+✅ **Secure Authentication** – Uses interactive Microsoft Graph authentication with delegated read-only scopes.
 ✅ **Optimized Module Usage** – Only loads **Microsoft.Graph.DeviceManagement** instead of the full Microsoft Graph SDK.  
 ✅ **User-Friendly Logging** – Displays script names and status updates in real-time.  
 ✅ **Efficient & Non-Destructive** – Prevents redundant installations and unnecessary re-execution.  
@@ -36,17 +36,17 @@ cd Graph-Intune-Script-Exporter
 Run the script using:  
 
 ```powershell
-.\Get-IntuneScripts.ps1
+.\Get-IntuneScripts.ps1 -ScriptPath "C:\Temp\IntuneScripts"
 ```
 
 ### **4️⃣ Authenticate with Microsoft Graph**  
-- A **pop-up login window** will appear.
-- Sign in with your **AAD Global Admin** or **Intune Admin** credentials.
+- An interactive Microsoft Graph sign-in prompt will appear.
+- Sign in with an account that can read Intune device management configuration.
 
 ### **5️⃣ What Happens Next?**  
-✅ The script **checks for required modules** (`NuGet` & `Microsoft.Graph.DeviceManagement`).  
+✅ The script **checks for required modules** (`Microsoft.Graph`).
 ✅ If missing, it **installs them automatically**.  
-✅ The script **connects to the Microsoft Graph API** via pop-up login.  
+✅ The script **connects to the Microsoft Graph API** with delegated authentication.
 ✅ Retrieves **all Intune scripts** and displays their **names**.  
 ✅ Downloads and **saves scripts locally** to **`C:\temp`**.  
 ✅ Displays a **success message** once all scripts are downloaded.  
@@ -54,9 +54,9 @@ Run the script using:
 ## 🔎 Notes  
 - The script authenticates with **`Connect-MgGraph`** and delegated Graph scopes.
 - It **only loads `Microsoft.Graph.DeviceManagement`**, reducing load times.  
-- Scripts are saved in **ASCII encoding** for compatibility.  
-- If a script with the same name already exists, it will be **overwritten**.  
-- To change the save location, modify the `$ScriptPath` variable in the script.  
+- Scripts are saved in **UTF-8** encoding.
+- Existing files are skipped by default; use `-ForceOverwrite` to replace them.
+- Use `-ScriptPath` to change the output location without editing the script.
 
 ## 🛠 Troubleshooting  
 
