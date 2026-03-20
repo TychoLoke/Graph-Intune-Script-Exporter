@@ -1,5 +1,9 @@
 # Graph Intune Script Exporter
 
+[![Release](https://img.shields.io/github/v/release/TychoLoke/Graph-Intune-Script-Exporter)](https://github.com/TychoLoke/Graph-Intune-Script-Exporter/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/TychoLoke/Graph-Intune-Script-Exporter/powershell-ci.yml?branch=main)](https://github.com/TychoLoke/Graph-Intune-Script-Exporter/actions/workflows/powershell-ci.yml)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 This PowerShell script exports Microsoft Intune device management scripts through Microsoft Graph and saves each script locally.
 
 ## What It Does
