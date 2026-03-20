@@ -1,81 +1,40 @@
-# 🚀 Graph Intune Script Exporter
+# Graph Intune Script Exporter
 
-This **PowerShell script**, authored by **Tycho Löke**, automates the process of retrieving and downloading **all scripts associated with your Intune account** via the **Microsoft Graph API**.  
+This PowerShell script exports Microsoft Intune device management scripts through Microsoft Graph and saves each script locally.
 
-The downloaded scripts are saved locally at **`C:\temp`** by default.  
+## What It Does
 
-## 📌 Features  
-✅ **Automated Intune Script Retrieval** – Fetches all scripts linked to your Intune tenant.  
-✅ **Secure Authentication** – Uses interactive Microsoft Graph authentication with delegated read-only scopes.
-✅ **Optimized Module Usage** – Only loads **Microsoft.Graph.DeviceManagement** instead of the full Microsoft Graph SDK.  
-✅ **User-Friendly Logging** – Displays script names and status updates in real-time.  
-✅ **Efficient & Non-Destructive** – Prevents redundant installations and unnecessary re-execution.  
+- Connects to Microsoft Graph with delegated read-only access
+- Downloads all Intune device management scripts from the tenant
+- Saves script content as UTF-8 files
+- Skips existing files unless you pass `-ForceOverwrite`
+- Bootstraps `PowerShellAdminHelpers` from `TychoLoke/powershell-admin-helpers` if needed
 
-## 🛠 Prerequisites  
-Before running the script, ensure you meet the following requirements:  
+## Requirements
 
-- **Azure Active Directory (AAD)** – Must have an **Intune subscription**.  
-- **Admin Role** – Requires **Global Admin** or **Intune Admin** role in AAD.  
-- **PowerShell with Elevated Permissions** – Run as Administrator.  
-- **Internet Connectivity** – Needed to install required PowerShell modules.  
+- PowerShell 7 recommended
+- An account that can read Intune device management configuration
+- Permission to install PowerShell modules for the current user
+- Internet access the first time you run the script so it can bootstrap the shared helper module
 
-## 🚀 How to Use  
-
-### **1️⃣ Download the Script**  
-Clone this repository or download the script file manually.  
-
-```powershell
-git clone https://github.com/TychoLoke/Graph-Intune-Script-Exporter.git
-cd Graph-Intune-Script-Exporter
-```
-
-### **2️⃣ Run PowerShell as Administrator**  
-- Open **PowerShell** with elevated permissions (`Run as Administrator`).  
-
-### **3️⃣ Execute the Script**  
-Run the script using:  
+## Usage
 
 ```powershell
 .\Get-IntuneScripts.ps1 -ScriptPath "C:\Temp\IntuneScripts"
 ```
 
-### **4️⃣ Authenticate with Microsoft Graph**  
-- An interactive Microsoft Graph sign-in prompt will appear.
-- Sign in with an account that can read Intune device management configuration.
+To overwrite existing local files:
 
-### **5️⃣ What Happens Next?**  
-✅ The script **checks for required modules** (`Microsoft.Graph`).
-✅ If missing, it **installs them automatically**.  
-✅ The script **connects to the Microsoft Graph API** with delegated authentication.
-✅ Retrieves **all Intune scripts** and displays their **names**.  
-✅ Downloads and **saves scripts locally** to **`C:\temp`**.  
-✅ Displays a **success message** once all scripts are downloaded.  
+```powershell
+.\Get-IntuneScripts.ps1 -ScriptPath "C:\Temp\IntuneScripts" -ForceOverwrite
+```
 
-## 🔎 Notes  
-- The script authenticates with **`Connect-MgGraph`** and delegated Graph scopes.
-- It **only loads `Microsoft.Graph.DeviceManagement`**, reducing load times.  
-- Scripts are saved in **UTF-8** encoding.
-- Existing files are skipped by default; use `-ForceOverwrite` to replace them.
-- Use `-ScriptPath` to change the output location without editing the script.
+## Notes
 
-## 🛠 Troubleshooting  
+- The script uses the `DeviceManagementConfiguration.Read.All` delegated Graph scope.
+- `Microsoft.Graph` and `Microsoft.Graph.DeviceManagement` are installed automatically if they are missing.
+- The output directory is created automatically if it does not exist.
 
-### ❌ Unable to connect to Microsoft Graph API?  
-- Verify that you have the correct **AAD permissions** and an **active Intune subscription**.  
+## License
 
-### ❌ Script fails to install required modules?  
-- Ensure you have **internet connectivity** and that your **PowerShell execution policy** allows module installation.  
-
-### ❌ Error messages during execution?  
-- Check the **PowerShell output** and verify if required permissions or dependencies are missing.  
-
-## 🤝 Contributing  
-Want to improve this script? Contributions are welcome!  
-
-**To contribute:**  
-1. **Fork** the repository.  
-2. **Create a feature branch** (`git checkout -b feature-name`).  
-3. **Submit a Pull Request** with your changes.  
-
-## 📜 License  
-This project is licensed under the **MIT License** – feel free to use, modify, and distribute it.  
+This project is licensed under the MIT License.

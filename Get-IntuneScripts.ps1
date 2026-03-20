@@ -20,56 +20,40 @@ param(
     [switch]$ForceOverwrite
 )
 
+$ErrorActionPreference = "Stop"
+
+function Initialize-PowerShellAdminHelpers {
+    $moduleName = "PowerShellAdminHelpers"
+
+    if (-not (Get-Module -ListAvailable -Name $moduleName)) {
+        $installerPath = Join-Path -Path ([System.IO.Path]::GetTempPath()) -ChildPath "Install-PowerShellAdminHelpers.ps1"
+        Invoke-WebRequest -Uri "https://raw.githubusercontent.com/TychoLoke/powershell-admin-helpers/main/Install-PowerShellAdminHelpers.ps1" -OutFile $installerPath
+        & $installerPath
+    }
+
+    Import-Module -Name $moduleName -Force -ErrorAction Stop
+}
+
 try {
+    Initialize-PowerShellAdminHelpers
     $ScriptPath = [System.IO.Path]::GetFullPath($ScriptPath)
     Write-Output "[INFO] Resolved path: $ScriptPath"
 } catch {
     Write-Output "[ERROR] Invalid path entered: $($_.Exception.Message)"
-    Exit 1
+    exit 1
 }
 
 # Ensure the directory exists
 Write-Output "[INFO] Validating the directory path: $ScriptPath"
-if (!(Test-Path -Path $ScriptPath -PathType Container)) {
-    Write-Output "[INFO] Creating directory: $ScriptPath"
-    New-Item -ItemType Directory -Force -Path $ScriptPath | Out-Null
-}
+Ensure-OutputDirectory -Path $ScriptPath
 
 Write-Output "`n=============================="
 Write-Output "  Microsoft Intune Script Downloader"
 Write-Output "==============================`n"
 
-# Function to check and install missing modules
-function Ensure-Module {
-    param (
-        [string]$ModuleName
-    )
-    try {
-        if (!(Get-Module -Name $ModuleName -ListAvailable)) {
-            Write-Output "[INFO] Installing module: $ModuleName..."
-            Install-Module -Name $ModuleName -Force -ErrorAction Stop
-            Write-Output "[SUCCESS] Module installed: $ModuleName"
-        } else {
-            Write-Output "[INFO] Module already installed: $ModuleName"
-        }
-    } catch {
-    $ErrorMessage = $_.Exception.Message.ToString()
-        Write-Output "[ERROR] Failed to install module $($ModuleName): $ErrorMessage"
-        Exit 1
-    }
-}
-
 # Ensure required modules are installed
 Ensure-Module -ModuleName "Microsoft.Graph"
-
-# Import Microsoft.Graph.DeviceManagement module
-try {
-    Import-Module Microsoft.Graph.DeviceManagement -Global -ErrorAction Stop
-    Write-Output "[SUCCESS] Microsoft.Graph.DeviceManagement module imported."
-} catch {
-    Write-Output "[ERROR] Failed to import Microsoft.Graph module: $($_.Exception.Message)"
-    Exit 1
-}
+Ensure-Module -ModuleName "Microsoft.Graph.DeviceManagement"
 
 # Define required Graph API scopes
 $Scopes = @("DeviceManagementConfiguration.Read.All")
@@ -77,11 +61,11 @@ $Scopes = @("DeviceManagementConfiguration.Read.All")
 # Connect to Microsoft Graph API
 try {
     Write-Output "[INFO] Connecting to Microsoft Graph with required permissions..."
-    Connect-MgGraph -Scopes $Scopes -ErrorAction Stop
+    Connect-GraphWithScopes -Scopes $Scopes
     Write-Output "[SUCCESS] Connected to Microsoft Graph with necessary permissions."
 } catch {
     Write-Output "[ERROR] Could not connect to Microsoft Graph: $($_.Exception.Message)"
-    Exit 1
+    exit 1
 }
 
 # Retrieve Intune scripts
@@ -113,7 +97,7 @@ try {
             continue
         }
 
-        $DecodedScript | Out-File -FilePath $FilePath -Encoding UTF8
+        $DecodedScript | Set-Content -Path $FilePath -Encoding UTF8
         Write-Output "[SUCCESS] Downloaded: $($Script.FileName)"
     }
 
@@ -121,7 +105,9 @@ try {
 
 } catch {
     Write-Output "[ERROR] Failed to retrieve or download scripts: $($_.Exception.Message)"
-    Exit 1
+    exit 1
 } finally {
-    Disconnect-MgGraph | Out-Null
+    if (Get-MgContext) {
+        Disconnect-MgGraph | Out-Null
+    }
 }
