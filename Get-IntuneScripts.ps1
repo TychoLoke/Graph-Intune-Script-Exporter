@@ -22,7 +22,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-function Initialize-PowerShellAdminHelpers {
+function Initialize-PowerShellAdminHelper {
     $moduleName = "PowerShellAdminHelpers"
 
     if (-not (Get-Module -ListAvailable -Name $moduleName)) {
@@ -35,7 +35,7 @@ function Initialize-PowerShellAdminHelpers {
 }
 
 try {
-    Initialize-PowerShellAdminHelpers
+    Initialize-PowerShellAdminHelper
     $ScriptPath = [System.IO.Path]::GetFullPath($ScriptPath)
     Write-Output "[INFO] Resolved path: $ScriptPath"
 } catch {
