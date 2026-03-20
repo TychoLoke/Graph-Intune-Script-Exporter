@@ -1,4 +1,4 @@
-# 🚀 Intune Script Retriever  
+# 🚀 Graph Intune Script Exporter
 
 This **PowerShell script**, authored by **Tycho Löke**, automates the process of retrieving and downloading **all scripts associated with your Intune account** via the **Microsoft Graph API**.  
 
@@ -6,7 +6,7 @@ The downloaded scripts are saved locally at **`C:\temp`** by default.
 
 ## 📌 Features  
 ✅ **Automated Intune Script Retrieval** – Fetches all scripts linked to your Intune tenant.  
-✅ **Secure Authentication** – Uses a **pop-up login window** for seamless authentication with Microsoft Graph.  
+✅ **Secure Authentication** – Uses interactive Microsoft Graph authentication with delegated scopes.
 ✅ **Optimized Module Usage** – Only loads **Microsoft.Graph.DeviceManagement** instead of the full Microsoft Graph SDK.  
 ✅ **User-Friendly Logging** – Displays script names and status updates in real-time.  
 ✅ **Efficient & Non-Destructive** – Prevents redundant installations and unnecessary re-execution.  
@@ -25,8 +25,8 @@ Before running the script, ensure you meet the following requirements:
 Clone this repository or download the script file manually.  
 
 ```powershell
-git clone https://github.com/your-repo/intune-script-retriever.git
-cd intune-script-retriever
+git clone https://github.com/TychoLoke/Graph-Intune-Script-Exporter.git
+cd Graph-Intune-Script-Exporter
 ```
 
 ### **2️⃣ Run PowerShell as Administrator**  
@@ -36,7 +36,7 @@ cd intune-script-retriever
 Run the script using:  
 
 ```powershell
-.\Intune-Script-Retriever.ps1
+.\Get-IntuneScripts.ps1
 ```
 
 ### **4️⃣ Authenticate with Microsoft Graph**  
@@ -52,7 +52,7 @@ Run the script using:
 ✅ Displays a **success message** once all scripts are downloaded.  
 
 ## 🔎 Notes  
-- The script now **uses the pop-up login method (`-UseWebLogin`)** instead of device authentication.  
+- The script authenticates with **`Connect-MgGraph`** and delegated Graph scopes.
 - It **only loads `Microsoft.Graph.DeviceManagement`**, reducing load times.  
 - Scripts are saved in **ASCII encoding** for compatibility.  
 - If a script with the same name already exists, it will be **overwritten**.  
